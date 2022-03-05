@@ -5,7 +5,7 @@ paginate: 6 #articles per page
 paginate_path: /blog/page:num #makes pagination working
 
 # header text
-title: My Blog
+title: Wu's Blog
 header: blah blah blah...
 
 # for welcome page
