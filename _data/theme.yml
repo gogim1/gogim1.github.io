@@ -8,7 +8,7 @@ compact: false
 show_post_navs: true
 
 # show this info in post header
-show_post_commets_count: true
+show_post_commets_count: false
 show_post_tags: true
 
 # customize max-width of the main content
