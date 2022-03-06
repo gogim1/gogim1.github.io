@@ -1,2 +1,2 @@
 text: |
-  [我的简历](assets/cv.pdf)
+  [我的简历]({{ site.url }}/assets/cv.pdf)
