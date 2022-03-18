@@ -18,6 +18,7 @@ public：
 ```
 ### 模板类型推导
 * ParamType 是普通引用或者是指针，直接比对
+
 ```
 int x = 27;         // x是一个int
 const int cx = x;   // cx是一个const int
@@ -35,7 +36,9 @@ constexpr std::size_t arraySize(T (&)[N]) noexcept {
     return N; 
 }
 ```
+
 * ParamType 是通用的引用，左值变引用，右值和上一种方法一样
+
 ```
 template<typename T> void f(T&& param); 
 f(x);   // x是左值，所以T是int&，param的类型也是int&
@@ -43,7 +46,9 @@ f(cx);  // cx是左值，所以T是const int&，param的类型也是const int&
 f(rx);  // rx是左值，所以T是const int&，param的类型也是const int&
 f(27);  // 27是右值，所以T是int，所以param的类型是int&&
 ```
+
 * ParamType 既不是指针也不是引用，忽略CV
+
 ```
 template<typename T> void f(T param); 
 f(x);   // T和param的类型都是int
@@ -291,6 +296,7 @@ std::string name("Bart");
 w.addName(name);          
 w.addName(name + "Jenne");  
 ```
+
 * 重载方式两份代码维护麻烦。左值一次拷贝，右值一次移动
 * 通用引用方式模板定义必须放在头文件、可能实例化过多函数、而且有些实参类型不能通过通用引用传递。左值一次拷贝，右值一次移动。
 * 传值方式，左值实参，一次拷贝一次移动，右值实参两次移动。
@@ -316,9 +322,11 @@ vs.push_back("xyzzy");
 1. 通过字面量`xyzzy`创建string临时对象
 2. vector调用移动构造函数，在容器内部创建一个对象
 3. string临时对象销毁
+
 ```
 vs.emplace_back("xyzzy");
 ```
+
 这里没有临时变量产生
 
 置入不一定会优于插入，但下列条件满足，我们就使用置入：
