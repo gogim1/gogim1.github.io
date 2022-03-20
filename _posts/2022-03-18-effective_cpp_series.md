@@ -1,6 +1,6 @@
 ---
-title: "effective三部曲"
-tags: [cpp, note]
+title: "Effective三部曲"
+tags: [cpp, notes]
 ---
 
 这是《Effective C++》、《More Effective C++》以及《Modern Effective C++》的读书笔记
