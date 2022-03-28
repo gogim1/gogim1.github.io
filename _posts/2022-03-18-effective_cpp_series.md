@@ -17,6 +17,9 @@ public：
 };
 ```
 ### 模板类型推导
+> 传入左值，T是左值引用，传入右值，T非引用。使用引用折叠推导出参数类型。auto同理。
+
+
 * ParamType 是普通引用或者是指针，直接比对
 
 ```
@@ -127,6 +130,129 @@ for (const auto& p : m) {}                          // 不会产生临时对象
 
 在C++98，允许内存释放（memory deallocation）函数（即operator delete和operator delete[]）和析构函数抛出异常是糟糕的代码设计，C++11将这种作风升级为语言规则。默认情况下，内存释放函数和析构函数——不管是用户定义的还是编译器生成的——都是隐式noexcept。因此它们不需要声明noexcept。
 
+
+### 对右值引用使用std::move，对通用引用使用std::forward
+对于形参，避免在右值引用上使用std::forward，通用引用上使用std::move。函数返回值同理。
+
+```
+Matrix operator+(Matrix&& lhs, const Matrix& rhs) {
+    lhs += rhs;
+    return std::move(lhs);	 
+}
+Matrix operator+(Matrix&& lhs, const Matrix& rhs) {
+    lhs += rhs;
+    return lhs;	 
+}
+```
+注意lhs是左值。在move返回的版本，lhs直接移动到返回值的内存位置。不用move的话，编译器拷贝对象到返回值的内存空间。
+
+以上讨论的是形参，对于局部变量不适用，因为会阻碍返回值优化，我们直接按值返回即可。返回值优化要求：
+1. 局部对象与函数返回值的类型相同
+2. 局部对象就是要返回的东西
+
+满足上面要求而编译器不做优化的情况下（比如不同控制流返回不同类型对象，或者局部变量是形参），编译器也会把返回的对象视为右值。
+
+*不满足优化要求的局部变量可以使用move返回？*
+
+### 避免在通用引用上重载
+```
+template<typename T>
+void logAndAdd(T&& name) { ... }
+
+void logAndAdd(int idx) { ... }
+```
+如果传入short类型，会导致通用引用版本被精确匹配。
+
+编译器会为类生成构造函数，可能在你意料外重载通用引用
+```
+class Person {
+public:
+    template<typename T>           
+    explicit Person(T&& n)  { ... }
+
+    Person(const Person& rhs);      //拷贝构造函数（编译器生成）
+    Person(Person&& rhs);           //移动构造函数（编译器生成）
+};
+```
+这会导致调用的构造函数可能不是你想要的。再引入继承关系，派生类的表现会更加复杂：
+```
+class SpecialPerson: public Person {
+public:
+    SpecialPerson(const SpecialPerson& rhs) 
+    : Person(rhs)  { … }
+
+    SpecialPerson(SpecialPerson&& rhs)     
+    : Person(std::move(rhs))  { … }
+};
+```
+SpecialPerson总是调用基类的通用引用版本的构造函数。
+
+因此要避免使用通用引用实现构造函数，因为对于non-const左值，它们比拷贝构造函数而更匹配，而且会劫持派生类对于基类的拷贝和移动构造函数的调用。
+
+### 通用引用重载的替代方法
+
+* 不重载
+* 不使用通用引用，替换为const T&
+* 传值
+* tag dispatch，但是不能解决类构造函数的问题
+* 约束使用通用引用的模板
+
+```
+template<typename T>                        
+void logAndAddImpl(T&& name, std::false_type) { ... }
+template<typename T>                        
+void logAndAddImpl(T&& name, std::true_type) { ... }
+template<typename T>
+void logAndAdd(T&& name) {
+    logAndAddImpl(std::forward<T>(name),
+            std::is_integral<typename std::remove_reference<T>::type>());
+}
+
+class Person {
+public:
+    template<typename T, typename = 
+        std::enable_if_t<!std::is_base_of<Person, std::decay_t<T>>::value>>
+    explicit Person(T&& n)  { … }
+    
+    Person(const Person& rhs);      //拷贝构造函数（编译器生成）
+    Person(Person&& rhs);           //移动构造函数（编译器生成）
+};
+```
+
+
+### 引用折叠
+如果任一引用为左值引用，则结果为左值引用。否则结果为右值引用。
+
+引用折叠发生在四种情况下：模板实例化，auto类型推导，typedef与别名声明的创建和使用，decltype。以typedef为例，其他三种的折叠方式见开头几节：
+```
+template<typename T>
+struct Widget {  typedef T&& RvalueRefToT;  };
+
+Widget<int&> w;
+```
+此时T会被推导为int&，得到`typedef int& && RvalueRefToT;`，折叠后是`typedef int& RvalueRefToT;`
+
+再举forward的例子，实现方式及使用方式如下：
+```
+template<typename T>                        
+T&& forward(remove_reference_t<T>& param) {
+  return static_cast<T&&>(param);
+}
+
+template<typename T>
+void f(T&& fParam) {
+    someFunc(std::forward<T>(fParam)); 
+}
+```
+如果f传入左值类型`int`，则f的T是`int&`，调用`std::forward<int&>(fParam)`，在forward中，调用`static_cast<int& &&>(param)`，折叠后变成`static_cast<int&>(param)`
+
+如果f传入右值类型`int`，则f的T是`int`，调用`std::forward<int>(fParam)`，在forward中，调用`static_cast<int&&>(param)`
+
+
+### 移动操作可能没那么快
+一些容器不存在开销小的移动操作，比如`array`需要把容器中的元素都移动到新对象中，线性时间。对于其他数据存储在堆的容器，如`vector`，只需要修改对象指向堆具体内容的指针，常量时间。
+
+`string`提供了常数时间的移动操作和线性时间的复制操作，但如果采用`SSO`的实现方式，数据存储在对象的缓冲区中，移动操作就不比复制操作快
 
 ### 完美转发失败的情况
 ```
