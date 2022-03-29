@@ -130,6 +130,78 @@ for (const auto& p : m) {}                          // 不会产生临时对象
 
 在C++98，允许内存释放（memory deallocation）函数（即operator delete和operator delete[]）和析构函数抛出异常是糟糕的代码设计，C++11将这种作风升级为语言规则。默认情况下，内存释放函数和析构函数——不管是用户定义的还是编译器生成的——都是隐式noexcept。因此它们不需要声明noexcept。
 
+### unique_ptr
+当使用默认删除器时，可以假设unique_ptr对象和原始指针大小相同。当自定义函数对象形式的删除器，unique_ptr的大小取决于函数对象中存储的状态多少，无状态函数对象（比如不捕获变量的lambda表达式）对大小没有影响。所以自定义删除器尽量使用lambda
+
+### shared_ptr
+![](https://raw.githubusercontent.com/CnTransGroup/EffectiveModernCppChinese/master/4.SmartPointers/media/item19_fig1.png)
+unique_ptr删除器类型是智能指针类型的一部分，std::shared_ptr则不是。因此`vector<shared_ptr<Widget>>`可以放不同删除器的shared_ptr。不同删除器的shared_ptr也能互相赋值
+
+shared_from_this查找当前对象控制块，然后创建一个新的shared_ptr关联这个控制块。设计的依据是当前对象已经存在一个关联的控制块。如果没有shared_ptr指向当前对象，行为是未定义,通常抛出异常
+
+shared_ptr不能处理数组
+
+### weak_ptr
+在调用weak_ptr::expired和解引用操作之间，另一个线程可能对指向这对象的shared_ptr重新赋值或者析构。因此会使用weak_ptr::lock，它返回shared_ptr。如果weak_ptr过期这个shared_ptr为空。或者以weak_ptr为实参构造shared_ptr。如果weak_ptr过期，会抛出一个异常
+
+### 优先使用make_unique、make_shared而非new
+```
+processWidget(std::shared_ptr<Widget>(new Widget), computePriority());
+processWidget(std::make_shared<Widget>(), computePriority());
+```
+如果computePriority抛出异常，第一个processWidget可能会资源泄露。
+
+make_*函数比调用构造函数更快，因为只需要分配一次内存。
+
+不过make_*函数不能自定义删除器，也不能直接使用花括号初始化。
+
+std::make_shared的话，shared_ptr的控制块与指向的对象放在同一块内存中，这导致只有控制块的内存也被销毁，对象占用的内存才被释放。而只要weak_ptrs引用一个控制块，该控制块就必须继续存在。
+
+### 使用Pimpl时，在实现文件中定义特殊成员函数
+```
+// widget.h
+class Widget() {                  
+public:
+    Widget();
+    struct Impl;              
+    std::unique_ptr<Impl> pImpl;
+};
+// widget.cpp
+#include "widget.h"           
+
+struct Widget::Impl { ... };
+Widget::Widget() : pImpl(std::make_unique<Impl>())  {}
+```
+编译会出错，应该在cpp文件中加入析构函数的定义`Widget::~Widget() = default;`。注意我们加了析构函数的定义后，编译器不会帮我们生成其他特殊函数，如果需要的话，我们需要再次在cpp文件中定义。
+
+上面讨论的是unique_ptr，shared_ptr不需要。unique_ptr删除器的类型是这个智能指针的一部分，因此特殊成员函数被调用时，必须已经是一个完成类型。shared_ptr删除器的类型不是该智能指针的一部分，特殊成员函数被使用的时候，指向的对象不必是一个完成类型。
+```
+auto loggingDel = [](Widget *pw) { ... };
+std::unique_ptr<Widget, decltype(loggingDel)> upw(new Widget, loggingDel);
+std::shared_ptr<Widget> spw(new Widget, loggingDel);     
+```
+### 理解move和forward
+move和forward只是执行类型转换。
+```
+class Annotation {
+public:
+    explicit Annotation(const std::string text)
+    ：value(std::move(text))  { … }        
+
+    std::string value;
+};
+```
+这里`text`是拷贝到`Annotation::value`而不是移动。因为text的move结果是`const std::string&&`，调用string的`string(const string& rhs)`构造函数。
+
+不要在你希望能移动对象的时候，声明他们为const。对const对象的移动请求会悄无声息的被转化为拷贝操作。
+
+### 区分通用引用和右值引用
+```
+template <typename T>
+void f(std::vector<T>&& param);     // 右值引用
+emplate <typename T>
+void f(const T&& param);            // 右值引用
+```
 
 ### 对右值引用使用std::move，对通用引用使用std::forward
 对于形参，避免在右值引用上使用std::forward，通用引用上使用std::move。函数返回值同理。
