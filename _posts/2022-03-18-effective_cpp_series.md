@@ -125,10 +125,29 @@ for (const auto& p : m) {}                          // 不会产生临时对象
 ```
 如果不使用auto，你要取p的地址，将得到一个指向临时对象的指针，这个临时对象在每次循环结束时将被销毁。
 
+### 使用deleted函数
+deleted函数有一个优势是任何函数都可以标记为deleted，而只有成员函数可被标记为private。deleted函数还能禁止一些模板的实例化。
+```
+template<typename T> void processPointer(T* ptr);
+template<> void processPointer<void>(void*) = delete;
+
+struct Widget {
+    template<typename T> void processPointer(T* ptr) { … }
+};
+template<> void Widget::processPointer<void>(void*) = delete; 
+```
+
 ### 使用noexcept
 移动构造函数、swap函数，最好加上noexcept
 
 在C++98，允许内存释放（memory deallocation）函数（即operator delete和operator delete[]）和析构函数抛出异常是糟糕的代码设计，C++11将这种作风升级为语言规则。默认情况下，内存释放函数和析构函数——不管是用户定义的还是编译器生成的——都是隐式noexcept。因此它们不需要声明noexcept。
+
+### 特殊成员函数的生成
+特殊成员函数：默认构造函数，析构函数，拷贝构造函数，拷贝赋值运算符、移动构造函数和移动赋值运算符
+
+声明一个拷贝操作不会限制编译器生成另一个。但是声明一个移动操作，编译器就不再生成另一个。声明了拷贝操作，编译器就不会生成移动操作。反之亦然。声明了析构操作，移动操作不会自动生成。
+
+注意，成员函数模版不会阻止编译器生成特殊成员函数。
 
 ### unique_ptr
 当使用默认删除器时，可以假设unique_ptr对象和原始指针大小相同。当自定义函数对象形式的删除器，unique_ptr的大小取决于函数对象中存储的状态多少，无状态函数对象（比如不捕获变量的lambda表达式）对大小没有影响。所以自定义删除器尽量使用lambda
