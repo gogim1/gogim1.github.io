@@ -546,12 +546,8 @@ class HelloWorld : private OutputPolicy, private LanguagePolicy
 {
     using OutputPolicy::print;
     using LanguagePolicy::message;
- 
 public:
-    // Behaviour method
-    void run() const
-    {
-        // Two policy methods
+    void run() const {
         print(message());
     }
 };
@@ -560,8 +556,7 @@ class OutputPolicyWriteToCout
 {
 protected:
     template<typename MessageType>
-    void print(MessageType const &message) const
-    {
+    void print(MessageType const &message) const {
         std::cout << message << std::endl;
     }
 };
@@ -569,42 +564,23 @@ protected:
 class LanguagePolicyEnglish
 {
 protected:
-    std::string message() const
-    {
+    std::string message() const  {
         return "Hello, World!";
     }
 };
+
  
-class LanguagePolicyGerman
-{
-protected:
-    std::string message() const
-    {
-        return "Hallo Welt!";
-    }
-};
- 
-int main()
-{
-    /* Example 1 */
+int main() {
     typedef HelloWorld<OutputPolicyWriteToCout, LanguagePolicyEnglish> HelloWorldEnglish;
  
     HelloWorldEnglish hello_world;
-    hello_world.run(); // prints "Hello, World!"
- 
-    /* Example 2 
-     * Does the same, but uses another language policy */
-    typedef HelloWorld<OutputPolicyWriteToCout, LanguagePolicyGerman> HelloWorldGerman;
- 
-    HelloWorldGerman hello_world2;
-    hello_world2.run(); // prints "Hallo Welt!"
+    hello_world.run(); 
 }
 ```
 
 
 ## 奇异递归模板模式 (Curiously Recurring Template Pattern, CRTP)
-> https://xr1s.me/2018/05/10/brief-introduction-to-crtp/
-https://zhuanlan.zhihu.com/p/54945314
+> https://xr1s.me/2018/05/10/brief-introduction-to-crtp/、https://zhuanlan.zhihu.com/p/54945314
 
 所谓的 CRTP ，就是基类作为模板类，派生类在继承基类的时候，传入自己作为模板参数。CRTP 真正的用武之地，是在模板类需要访问派生的类的成员（变量或函数）的时候，它可以引用它的派生类，也就可以访问派生类的成员。
 
