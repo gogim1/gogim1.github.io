@@ -218,7 +218,7 @@ struct RegisterMessage : public Message {
 };
 
 ```
-这样的话，用户定义新的消息类也很简单：
+这样的话，用户定义新的消息类的方法如下，*有点繁琐*
 ```
 // 用户代码
 struct UserMessage : public RegisterMessage<UserMessage> { 
@@ -228,68 +228,5 @@ struct UserMessage : public RegisterMessage<UserMessage> {
 
 ```
 
-值得注意的是，模板类中的静态成员变量是惰性构造，因此需要手动触发`do_register_`的初始化。至此，修改后的DCR框架代码如下：
-```
-template <typename T>
-constexpr auto getTypeName() noexcept {
-    std::string name = __PRETTY_FUNCTION__, prefix, suffix;
-    prefix = "constexpr auto getTypeName() [with T = ";
-    suffix = "]";
-    name = name.substr(prefix.size());
-    name = name.substr(0, name.size() - suffix.size());
-    return name;
-}
-
-struct Message {};
-
-struct MessageFactory {
-    struct AbstractMessageBuilder {
-        virtual Message* build() = 0;
-    };    
-    
-    template<typename MessageType>
-    struct MessageBuilder : public AbstractMessageBuilder {
-        virtual Message* build() {
-            return new MessageType;
-        }
-    };
-
-    template<typename MessageType>
-    void registerMessage(const string &name) {
-        MessageBuilder<MessageType> *builder = new MessageBuilder<MessageType>();
-        builders_[name] = builder;
-    }
-
-    Message* build(const string &name) {
-        return builders_[name]->build();
-    }
-
-    std::map<string, AbstractMessageBuilder*> builders_;
-};
-
-
-MessageFactory* globalMessageFactory() {
-    static MessageFactory message_factory;
-    return &message_factory;
-}
-
-
-template <typename MessageType>
-struct RegisterMessage : public Message {
-    struct DoRegister {
-        DoRegister() {
-            globalMessageFactory()->registerMessage<MessageType>(
-                getTypeName<MessageType>()
-            );
-        }
-    };
-    RegisterMessage() {  
-        do_register_; 
-    }
-           
-    static inline DoRegister do_register_{};
-};
-```
-
-到这里，`Message`类已经被剖析得清清楚楚了。此外，DCR框架中的`MessageHandler`也是消息机制的一个重要组成部分，不过原理大致相同，也是**模板**+**多态**，可以试着自己分析一下。
+值得注意的是，模板类中的静态成员变量是惰性构造，因此需要手动触发`do_register_`的初始化。到这里，`Message`类已经被剖析得清清楚楚了。此外，DCR框架中的`MessageHandler`也是消息机制的一个重要组成部分，不过原理大致相同，也是**模板**+**多态**，可以试着自己分析一下。
 
