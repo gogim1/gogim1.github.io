@@ -20,7 +20,8 @@ disqus:
 
 # google analytics
 google:
-    tracking-id: "G-RZ7KGXKL9X" #your tracking id here
+    tracking-id: "" #your tracking id here
+    measurement-id: "G-RZ7KGXKL9X"
 
 gems:
   - jekyll-sitemap
