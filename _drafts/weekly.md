@@ -43,3 +43,46 @@ finally:
 
 
 
+<details>
+  <summary>22.8.7 - 22.8.21</summary>
+
+这两周在准备面试的东西，快速复习之前的笔记，发现好多细节都忘记了，可惜没太多时间去温习，只能走马观花，感觉有点手忙脚乱，不知道要干嘛了。
+
+到目前为止投了 13 家公司，有回复的只有四家。简单记录接下来的安排
+
+- [x] 13 号华为一二面
+- [x] 14 号大疆笔试
+- [x] 18 号寒武纪电面
+- [x] 20 号华为主管面
+- [ ] 22 号？转正相关工作
+- [x] 25 号学校中期答辩
+
+17 号刷脉脉时发现之前参加开源项目眼熟的大佬在发内推帖，加微信发了自己的简历。他看完提一口不很偏数据库。我自己心知肚明，但还是很沮丧。总结这几年的学习生涯，自己东学一点西学一点，蜻蜓点水，没有真正专注于一个领域去深挖。深感自己太菜了，眼界也狭窄。看了看大佬们的博客，整理了之后要学习的东西（接下来大概得毕业论文写完才有空了吧）。目前还是看看 leveldb，应付一下面试再说吧。
+
+<details>
+  <summary>TODO List</summary>
+
+要读的书
+
+- [ ] Readings in Database Systems
+- [ ] 精通 LevelDB
+- [ ] MySQL 技术内幕：InnoDB存储引擎
+- [ ] 数据库查询优化器的艺术：原理解析与 SQL 性能优化
+- [ ] 阅读[风空之枫的书单](https://github.com/mapleFU/MySQL-eight-legged)
+
+要读的论文
+
+- [ ] [C-Store: A Column-oriented DBMS](https://web.stanford.edu/class/cs345d-01/rl/cstore.pdf)
+- [ ] [Wisckey](https://www.bilibili.com/read/cv13658411)、 [参考资料](https://www.zhihu.com/column/c_1452633136869416960)
+- [ ] [卡比卡比的知乎专栏](https://www.zhihu.com/column/c_1440347225616953344)
+
+要研究的项目
+
+- [ ] boltdb [参考资料](https://zhuanlan.zhihu.com/p/391693148)
+- [ ] TinyKV
+- [ ] TinySql
+- [ ] kvrocks
+
+</details>
+
+</details>
