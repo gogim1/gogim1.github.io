@@ -1,5 +1,5 @@
 ---
-title: "Effective三部曲"
+title: "Effective 三部曲"
 tags: [cpp, notes]
 ---
 
