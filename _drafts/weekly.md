@@ -72,7 +72,7 @@ finally:
 要读的论文
 
 - [ ] [C-Store: A Column-oriented DBMS](https://web.stanford.edu/class/cs345d-01/rl/cstore.pdf)
-- [ ] [Wisckey](https://www.bilibili.com/read/cv13658411)、 [参考资料](https://www.zhihu.com/column/c_1452633136869416960)
+- [x] [Wisckey](https://www.bilibili.com/read/cv13658411)、 [参考资料](https://www.zhihu.com/column/c_1452633136869416960)
 - [ ] [卡比卡比的知乎专栏](https://www.zhihu.com/column/c_1440347225616953344)
 
 要研究的项目
