@@ -103,3 +103,32 @@ finally:
 - [x] 27 号美团笔试
 - [x] 26 号 selectdb 二面
 </details>
+
+
+<details>
+  <summary>22.8.29 - 22.9.4</summary>
+selectdb 二面挂，遗憾。目前投了二十多家，还没有一个 offer，感觉已经很久没有发生好的事情了。现在相比春招时硬气不少，但面试还是没过，意识到自己应该在某个专业领域持续投入，这周找几篇论文开始看了，也开始做 cmu15445 的实验。不过在周五的时候，在群里看到搞静态分析的真大佬也投了 selectdb，和我也是同个面试官，这下对比很明显了，泪目。大佬很顺利，offer 30K。据我所知他好像也没搞数据库，我开始动摇了，也许面试更看重的不是专业知识，而是开源贡献？
+  
+大疆面试时问了访问者模式，我前段时间在写数据库时就遇到这个问题并心里总结一下，但是面试时记不清了。现在记录如下：
+
+* 根据不同派生类执行不同操作，比如说 Binder 将 AST 转成 Bound 的场景。Binder::bind 函数输入参数是 AST 基类指针，需要根据不同派生类做对应操作。
+
+1. Binder 直接调用 AST 虚函数，由 AST 派生类的虚函数生成对应的 Bound 派生类。可以，但是我们希望将执行的过程从 AST 类中抽离到 Binder 中。因为在某些场景，执行的内容从逻辑上讲并不是 AST 的功能
+2. 给 AST 加入 tag，根据 tag 来获取派生类的类型，并将 AST 基类指针转成派生类。可以，但不优雅。
+ * 构造 AST 派生类需要定义 tag 值，而且 bind 中需要判断 tag 进行分发。而且继承树很深的情况下，需要判断很多次 tag（Statement-Expression-Value-StringValue）
+ * raw 基类指针转成派生类指针很容易，但是基类智能指针转成派生类智能指针有点麻烦
+3. 使用访问者模式。bind 调用指针的虚函数，虚函数调用 Binder 对应的函数。这函数一般都是重载函数，由参数匹配选择对应的重载函数。
+4. 考虑到访问者模式调用链复杂，bind 直接调用由参数匹配选择对应的重载函数。不可以，因为基类指针不能自动向派生类转换。  
+* 派生类的虚函数返回不同类型，基类的虚函数返回值如何定义？比如基类 Value，派生类 StringValue、IntValue，虚函数 GetValue()
+1. union
+2. variant，最好配合 visit 一起使用 [参考](https://zhuanlan.zhihu.com/p/366537214)
+
+
+- [x] 29 号字节一面
+- [x] 1 号大疆一面
+- [x] wisckey 论文
+- [ ] An Overview of Query Optimization in Relation Systems
+- [ ] Differentiated Key-Value Storage Management for Balanced I/O Performance，[参考](https://www.scienjus.com/diffkv/)
+- [ ] [数据库学习经验杂谈（长期更新）](https://zhuanlan.zhihu.com/p/553503630)
+</details>
+
