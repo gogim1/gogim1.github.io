@@ -1,5 +1,5 @@
 ---
-title: "Shadowsocks 源码阅读"
+title: "Shadowsocks 源码分析"
 tags: [code, net]
 ---
 

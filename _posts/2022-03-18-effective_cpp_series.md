@@ -3,7 +3,7 @@ title: "Effective 三部曲"
 tags: [cpp, notes]
 ---
 
-这是《Effective C++》、《More Effective C++》以及《Modern Effective C++》的读书笔记
+Effective C++、More Effective C++、Modern Effective C++ 笔记
 
 <!--more-->
 
