@@ -109,6 +109,7 @@ foo f g x = if f(x == 1) then g(x) else 20
 |20|Int|
 
 第二步的类型方程列表如下
+
 |Lhs | Rhs | 类型方程节点|
 |- | - | - |
 |Int|Int| 1|
