@@ -329,6 +329,7 @@ print(state.register_python_function("rev", lambda s: s[::-1]).execute()value.va
 实现：
 - py 调脚本：构建 ast
 - 脚本调 py：将 py 函数加入 env
+
 ```
 if intrinsic == '.py':
     py_args = []
@@ -407,8 +408,8 @@ getCC = lambda () {
 闭包 + 动态作用域
 [oop.expr](https://github.com/sdingcn/cvm.experimental/blob/a50ca30f0df42250d7f5af8c1069b1ec57eac11d/test/oop.expr)
 ### 结构/记录
-[bianary-tree.expr](https://github.com/sdingcn/cvm.experimental/blob/2f94e22a19429b726d0a3866dddc246094677c5b/test/binary-tree.expr)
-[bianary-tree.expr](https://github.com/sdingcn/cvm.experimental/blob/2f94e22a19429b726d0a3866dddc246094677c5b/test/quicksort.expr)
+- [bianary-tree.expr](https://github.com/sdingcn/cvm.experimental/blob/2f94e22a19429b726d0a3866dddc246094677c5b/test/binary-tree.expr)
+- [quicksort.expr](https://github.com/sdingcn/cvm.experimental/blob/2f94e22a19429b726d0a3866dddc246094677c5b/test/quicksort.expr)
 
 为避免迷失在层层闭包中，可以这么类比
 ```
