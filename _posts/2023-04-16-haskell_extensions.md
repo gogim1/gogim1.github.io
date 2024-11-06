@@ -1,14 +1,16 @@
-# Haskell 拓展
-
-标签（空格分隔）： 未分类
-
 ---
+title: "Haskell 拓展"
+tags: [haskell, wip]
+---
+
+<!--more-->
+
+> 修订历史
+> - 2023.04.16 创建笔记
+> - 2024.11.06 移出私密
 
 ### Reader 和 State 的区别
 https://www.reddit.com/r/haskell/comments/7gl2wh/when_to_use_reader_vs_state/
-
-
----
 
 ### RecordWildCards
 > https://riptutorial.com/haskell/example/13072/recordwildcards

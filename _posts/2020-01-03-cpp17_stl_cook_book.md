@@ -1,10 +1,14 @@
-# C++17 STL Cook Book
-
-标签（空格分隔）： 待整理
-
+---
+title: "C++17 STL Cook Book"
+tags: [cpp, wip, notes]
 ---
 
-> https://chenxiaowei.gitbook.io/c-17-stl-cook-book/
+<!--more-->
+
+> 修订历史
+> - 2020.01.03 创建笔记
+> - 2024.11.06 移出私密
+
 
 ## 第三章 迭代器
 迭代器的几种类型：双向、前向，随机访问等等。
