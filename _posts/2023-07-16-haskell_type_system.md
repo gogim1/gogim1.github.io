@@ -3,9 +3,9 @@ title: "Haskell 类型系统进阶"
 tags: [notes, haskell, wip]
 ---
 
-总结自「 Haskell in Depth 」第十一章 Type system advances
-
 <!--more-->
+
+总结自「 Haskell in Depth 」第十一章 Type system advances
 
 本文涉及：
 

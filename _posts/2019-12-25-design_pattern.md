@@ -3,8 +3,6 @@ title: "设计模式"
 tags: [notes]
 ---
 
-something about design patterns...
-
 <!--more-->
 
 ## 简单工厂模式
