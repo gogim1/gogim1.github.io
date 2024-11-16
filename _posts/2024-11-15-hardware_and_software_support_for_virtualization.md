@@ -1,6 +1,6 @@
 ---
 title: "Hardware and Software Support for Virtualization"
-tags: [virtualization, note, wip]
+tags: [virtualization, notes, wip]
 ---
 
 <!--more-->
