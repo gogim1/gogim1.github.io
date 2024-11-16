@@ -62,11 +62,13 @@ hypervisors 继续分类：
 为避免名词混淆，这里定义
 - guest-physical memory。虚拟机暴露的内存抽象
 - host-physical memory。底层资源
+
 ### APPROACHES TO VIRTUALIZATION AND PARAVIRTUALIZATION
 早期的虚拟化方式：
 - Full (software) virtualization。执行前翻译客户指令
 - Hardware Virtualization (HVM)。直接执行
 - Paravirtualization。看重简单性和整体效率，不完全兼容
+
 ### 优势
 - 一台机器运行多个操作系统
 - 满足每个应用一台服务器的要求

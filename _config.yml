@@ -5,8 +5,8 @@ paginate: 6 #articles per page
 paginate_path: /blog/page:num #makes pagination working
 
 # header text
-title: My Personal Notebook
-header: this blog contains some of my study notes, most of which are still 'work in progress'....
+title: Gogim1's Notebook
+header: 
 
 # for welcome page
 # to replace image go to index.html
