@@ -7,6 +7,7 @@ tags: [virtualization, notes, wip]
 
 > 修订历史
 > - 2024.11.15 创建笔记
+> - 2025.01.18 补充
 
 ## 定义
 ### 虚拟化
@@ -57,7 +58,11 @@ hypervisors 继续分类：
 - type-2。在 host OS 上运行。如 VMware Workstation、VMware Fusion、KVM、Microsoft VirtualPC、Parallels、Oracle VirtualBox
 
 ### A SKETCH HYPERVISOR: MULTIPLEXING AND EMULATION
-*没讲什么重要的*
+书里 hypervisor 草图，使用三种关键虚拟化技术中的复用与模拟。
+
+machine simulator 和 hypervisor 之间的主要区别在于，前者模拟虚拟机的 isa，而后者则复用 isa。cpu 复用类似操作系统调度进程，这允许虚拟 cpu 直接在真实处理器上执行指令。
+
+当 guest os 执行特权指令会 trap，hypervisor 需要模拟 trap
 ### NAMES FOR MEMORY
 为避免名词混淆，这里定义
 - guest-physical memory。虚拟机暴露的内存抽象
@@ -79,8 +84,24 @@ hypervisors 继续分类：
 - 云计算
 
 ## The Popek/Goldberg Theorem
-验证是否可以使用复用 VMM 来虚拟化给定 ISA 的理论。防止体系结构的设计方案不支持虚拟化
+验证是否可以使用**复用** VMM 来虚拟化给定 ISA 的理论。防止体系结构的设计方案不支持虚拟化
+
+*主要是讲论文的内容，跳过*
 
 ### 模型
+### 理论
+### RECURSIVE VIRTUALIZATION AND HYBRID VIRTUAL MACHINES
+### 用分页代替分段
+### WELL-KNOWN VIOLATIONS
+- Direct access to physical memory: 允许直接访问物理内存(MIPS)
+- Location-sensitive instructions: 非特权指令可访问敏感数据的地址区间(e.g. GDT in x86, 用户可读取系统状态)
+- Control-sensitive violations: 同一指令在不同特权级下表现不同(e.g. iret, popf on x86)
+
+讨论 MIPS、x86-32、ARM 架构虚拟化的可能性：在 MIPS, X86-32 和 ARM 上无法按照 popek/Goldberg 的思路（以 trap-emulate+direct execution 的形式执行）构建VMM。
+
+## 无需架构支持的虚拟化
+本章介绍硬件虚拟化支持之前 VMM 是如何设计的
+
+
 ## 参考
 - https://zhuanlan.zhihu.com/p/186286059
